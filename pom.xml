@@ -1,0 +1,156 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!--
+  Copyright (c) 2011 - 2012 Markku Saarela.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/legal/epl-v10.html
+
+  Contributors:
+       Markku Saarela - initial implementation
+
+ -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- The Basics -->
+  <groupId>jivalo.plugins</groupId>
+  <artifactId>eclipse-deps-maven-plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit-dep</artifactId>
+      <version>4.10</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>1.2.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <jdkVersion>1.6</jdkVersion>
+    <mavenVersion>3.0.4</mavenVersion>
+  </properties>
+
+  <!-- Build Settings -->
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- core plugins -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.5.1</version>
+          <configuration>
+            <verbose>true</verbose>
+            <fork>false</fork>
+            <executable>${jdkHome}/bin/javac</executable>
+            <compilerVersion>${jdkVersion}</compilerVersion>
+            <source>${jdkVersion}</source>
+            <target>${jdkVersion}</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.12</version>
+          <configuration>
+            <jvm>${jdkHome}/bin/java</jvm>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12</version>
+          <configuration>
+            <jvm>${jdkHome}/bin/java</jvm>
+          </configuration>
+        </plugin>
+        <!-- Packaging types / tools plugins -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <!-- Reporting plugins -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.8.1</version>
+          <configuration>
+            <source>${jdkVersion}</source>
+            <javadocExecutable>${jdkHome}/bin/javadoc</javadocExecutable>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+       <!-- Tools -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  
+  <!-- More Project Information -->
+  <name>Eclipse dependencies for Maven Maven Plugin</name>
+
+  <!-- Environment Settings -->
+
+</project>  
+
