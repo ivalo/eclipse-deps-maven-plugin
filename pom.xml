@@ -46,9 +46,13 @@
   </dependencies>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <jdkVersion>1.6</jdkVersion>
     <mavenVersion>3.0.4</mavenVersion>
-    <gitLocalRepoParentDir>C:/git</gitLocalRepoParentDir>
+    <mavenUrlDist>http://localhost:8081/nexus/content/repositories</mavenUrlDist>
+    <vcsUrl>scm:git:file://C:/git</vcsUrl>
   </properties>
 
   <!-- Build Settings -->
@@ -183,25 +187,25 @@
 
   <!-- Environment Settings -->
   <scm>
-    <connection>scm:git:file://${gitLocalRepoParentDir}/eclipse-deps-maven-plugin</connection>
-    <developerConnection>scm:git:file://${gitLocalRepoParentDir}/eclipse-deps-maven-plugin</developerConnection>
+    <connection>${vcsUrl}/eclipse-deps-maven-plugin</connection>
+    <developerConnection>${vcsUrl}/eclipse-deps-maven-plugin</developerConnection>
   </scm>
 
   <distributionManagement>
     <repository>
       <id>local.nexus</id>
       <name>Local Nexus Repository</name>
-      <url>http://localhost:8081/nexus/content/repositories/releases</url>
+      <url>${mavenUrlDist}/releases</url>
     </repository>
     <snapshotRepository>
       <id>local.nexus</id>
       <name>Local Nexus Repository</name>
-      <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+      <url>${mavenUrlDist}/snapshots</url>
     </snapshotRepository>
     <!--site>
       <id>project-site</id>
       <name>Maven project site</name>
-      <url>file:///tmp/elease-site</url>
+      <url>file:///tmp/release-site</url>
     </site-->
   </distributionManagement>    
 
