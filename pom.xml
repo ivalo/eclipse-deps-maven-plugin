@@ -52,7 +52,7 @@
     <jdkVersion>1.6</jdkVersion>
     <mavenVersion>3.0.4</mavenVersion>
     <mavenUrlDist>http://localhost:8081/nexus/content/repositories</mavenUrlDist>
-    <vcsUrl>scm:git:file://C:/git</vcsUrl>
+    <vcsUrl>scm:git:file://home/markku/git</vcsUrl>
   </properties>
 
   <!-- Build Settings -->
