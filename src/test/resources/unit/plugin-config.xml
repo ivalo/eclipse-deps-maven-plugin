@@ -1,0 +1,12 @@
+<project>
+  <name>eclipse-deps-plugin-test</name>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>eclipse-deps-maven-plugin</artifactId>
+        <configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
