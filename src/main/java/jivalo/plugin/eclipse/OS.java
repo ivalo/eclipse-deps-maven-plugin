@@ -12,13 +12,12 @@ package jivalo.plugin.eclipse;
 
 /**
  * @author Markku Saarela
- *
+ * 
  */
-public enum OperatingSystem
+public enum OS
 {
-    LINUX( "sh", ".", "" ),
-    WINDOWS( "bat", "call", "echo on" );
-    
+    LINUX( "sh", null, null ), WINDOWS( "bat", "call", "echo on" );
+
     private final String scriptFileExtension;
     private final String subScriptCall;
     private final String enableEcho;
@@ -26,7 +25,7 @@ public enum OperatingSystem
     /**
      * @param scriptFileExtension
      */
-    private OperatingSystem( String scriptFileExtension, String subScriptCall, String enableEcho )
+    private OS( String scriptFileExtension, String subScriptCall, String enableEcho )
     {
         this.scriptFileExtension = scriptFileExtension;
         this.subScriptCall = subScriptCall;
@@ -59,15 +58,19 @@ public enum OperatingSystem
 
     /**
      * 
-     * @param osName The Operating system name
+     * @param osName
+     *            The Operating system name
      * @return
      */
-    public static OperatingSystem valueOfOsName(String osName) {
+    public static OS platformOs()
+    {
 
-        if (osName != null && osName.startsWith( "Windows" )) {
+        String osName = System.getProperty( "os.name" );
+        if ( osName != null && osName.startsWith( "Windows" ) )
+        {
             return WINDOWS;
         }
-        
+
         return LINUX;
     }
 }

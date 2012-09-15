@@ -22,19 +22,22 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * @goal generateDependencies
+ * 
  * @author Markku Saarela
  * 
  */
+@Mojo( name = "generate-dependencies", threadSafe = true )
 public class GenerateEclipseDependenciesMojo extends AbstractEclipse2MavenMojo
 {
 
     /**
-     * @parameter default-value="eclipse-dependencies.xml"
-     * @required
+     * 
      */
+    @Parameter( property = "dependenciesFileName", defaultValue = "eclipse-dependencies.xml", required = true )
     private String dependenciesFileName;
 
     /**
@@ -46,27 +49,20 @@ public class GenerateEclipseDependenciesMojo extends AbstractEclipse2MavenMojo
     }
 
     /**
-     * Testing constructor.
-     * 
-     * @param eclipseInstallationFolder
-     * @param dependencyJarName
-     * @param dependenciesFileName
-     */
-    GenerateEclipseDependenciesMojo( File targetFolder, List< String > dependencyJarName, String dependenciesFileName )
-    {
-        super( targetFolder, dependencyJarName );
-        this.dependenciesFileName = dependenciesFileName;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         List< EclipseOsgiJarFile > eclipseDependencies = getEclipseDependencies();
-        System.out.println( eclipseDependencies );
-        writeXml( eclipseDependencies );
+        if ( eclipseDependencies != null && !eclipseDependencies.isEmpty() )
+        {
+            writeXml( eclipseDependencies );
+        }
+        else
+        {
+            getLog().info( "Eclipse Dependencies list is empty" );
+        }
     }
 
     private void writeXml( List< EclipseOsgiJarFile > eclipseDependencies )
@@ -75,7 +71,6 @@ public class GenerateEclipseDependenciesMojo extends AbstractEclipse2MavenMojo
         XMLStreamWriter writer = null;
         try
         {
-
             writer = factory.createXMLStreamWriter( getOutputStream(), "UTF-8" );
 
             int numberOfOpenStartedElements = 0;
@@ -129,8 +124,8 @@ public class GenerateEclipseDependenciesMojo extends AbstractEclipse2MavenMojo
         targetFolder.mkdirs();
 
         File file = new File( targetFolder, dependenciesFileName );
-        
-        return new File(file.getAbsolutePath());
+
+        return new File( file.getAbsolutePath() );
     }
 
     private void writeDependency( EclipseOsgiJarFile eclipseOsgiJarFile, XMLStreamWriter writer,
@@ -179,5 +174,4 @@ public class GenerateEclipseDependenciesMojo extends AbstractEclipse2MavenMojo
         }
         return indent;
     }
-
 }

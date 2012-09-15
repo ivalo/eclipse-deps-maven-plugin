@@ -19,15 +19,15 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
  * @author Markku Saarela
  * 
  */
-public class InstallJars2RepoMojoTest extends AbstractMojoTestCase
+public class GenerateEclipseDependenciesMojoTest extends AbstractMojoTestCase
 {
 
-    private InstallJars2RepoMojo mojo;
+    private GenerateEclipseDependenciesMojo mojo;
 
     /**
      * Default constructor.
      */
-    public InstallJars2RepoMojoTest()
+    public GenerateEclipseDependenciesMojoTest()
     {
         super();
     }
@@ -41,7 +41,7 @@ public class InstallJars2RepoMojoTest extends AbstractMojoTestCase
         // required for mojo lookups to work
         super.setUp();
         File testPom = new File( getBasedir(), "src/test/resources/unit/plugin-config.xml" );
-        mojo = (InstallJars2RepoMojo) lookupMojo( "install-dependencies-script", testPom );
+        mojo = (GenerateEclipseDependenciesMojo) lookupMojo( "generate-dependencies", testPom );
     }
 
     public void testExecute() throws Exception
@@ -53,6 +53,8 @@ public class InstallJars2RepoMojoTest extends AbstractMojoTestCase
         dependencyJarNames.add( "org.eclipse.core.runtime" );
         dependencyJarNames.add( "org.eclipse.core.variables" );
         setVariableValueToObject( mojo, "dependencyJarNames", dependencyJarNames );
+        setVariableValueToObject( mojo, "dependenciesFileName", "eclipse-dependencies.xml" );
         mojo.execute();
     }
+
 }

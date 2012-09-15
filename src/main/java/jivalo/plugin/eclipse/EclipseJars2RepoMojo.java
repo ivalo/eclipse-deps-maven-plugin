@@ -26,24 +26,12 @@ import org.apache.maven.plugin.MojoFailureException;
 public abstract class EclipseJars2RepoMojo extends AbstractEclipse2MavenMojo
 {
 
-    protected final OperatingSystem os;
-
     /**
      * Default constructor.
      */
     public EclipseJars2RepoMojo()
     {
         super();
-        this.os = OperatingSystem.valueOfOsName( System.getProperty( "os.name" ) );
-    }
-
-    /**
-     * @param dependencyJarNames
-     */
-    public EclipseJars2RepoMojo( File targetFolder, List< String > dependencyJarNames )
-    {
-        super( targetFolder, dependencyJarNames );
-        this.os = OperatingSystem.valueOfOsName( System.getProperty( "os.name" ) );
     }
 
     /**
@@ -54,25 +42,44 @@ public abstract class EclipseJars2RepoMojo extends AbstractEclipse2MavenMojo
     {
         List< EclipseOsgiJarFile > eclipseDependencies = getEclipseDependencies();
 
-        StringBuilder script = new StringBuilder( startScript() );
+        if ( eclipseDependencies != null && !eclipseDependencies.isEmpty() )
+        {
+            try
+            {
+                createScriptFile( buildScript( eclipseDependencies ) );
+            }
+            catch ( IOException e )
+            {
+                e.printStackTrace();
+                throw new MojoExecutionException( "Creating script " + getScriptFile().getAbsolutePath()
+                        + " failed for reason " + e.getMessage(), e );
+            }
+        }
+        else
+        {
+            getLog().info( "Eclipse Dependencies list is empty" );
+        }
+    }
 
+    protected abstract String getScriptBaseFileName();
+
+    protected abstract CharSequence getRepoScriptCommand( EclipseOsgiJarFile eclipseOsgiJarFile );
+
+    protected StringBuilder appendParameter( StringBuilder command, CharSequence parameterName,
+            CharSequence parameterValue )
+    {
+        return command.append( " -D" ).append( parameterName ).append( "=" ).append( parameterValue );
+    }
+
+    private StringBuilder buildScript( List< EclipseOsgiJarFile > eclipseDependencies )
+    {
+        StringBuilder script = new StringBuilder( startScript() );
         for ( EclipseOsgiJarFile eclipseOsgiJarFile : eclipseDependencies )
         {
             script.append( getRepoScriptCommandLine( eclipseOsgiJarFile ) ).append( LINE_BREAK );
         }
-
         script.append( endScript() );
-
-        try
-        {
-            createScriptFile( script );
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-            throw new MojoExecutionException( "Creating script " + getScriptFile().getAbsolutePath()
-                    + " failed for reason " + e.getMessage(), e );
-        }
+        return script;
     }
 
     private void createScriptFile( StringBuilder script ) throws IOException
@@ -82,13 +89,9 @@ public abstract class EclipseJars2RepoMojo extends AbstractEclipse2MavenMojo
         out.close();
     }
 
-    protected abstract String getScriptBaseFileName();
-
     private File getScriptFile()
     {
-
         targetFolder.mkdirs();
-
         return new File( targetFolder, getScriptFileName() );
     }
 
@@ -99,12 +102,17 @@ public abstract class EclipseJars2RepoMojo extends AbstractEclipse2MavenMojo
 
     private String getScriptFileExtension()
     {
-        return this.os.getScriptFileExtension();
+        return OS.platformOs().getScriptFileExtension();
     }
 
     private CharSequence startScript()
     {
-        return new StringBuilder( os.getEnableEcho() ).append( LINE_BREAK );
+        String enableEcho = OS.platformOs().getEnableEcho();
+        if ( enableEcho == null )
+        {
+            return new StringBuilder();
+        }
+        return new StringBuilder( enableEcho ).append( LINE_BREAK );
     }
 
     private CharSequence endScript()
@@ -114,12 +122,12 @@ public abstract class EclipseJars2RepoMojo extends AbstractEclipse2MavenMojo
 
     private CharSequence getRepoScriptCommandLine( EclipseOsgiJarFile eclipseOsgiJarFile )
     {
-        StringBuilder stringBuilder = new StringBuilder( os.getSubScriptCall() );
-
-        stringBuilder.append( " " ).append( getRepoScriptCommand( eclipseOsgiJarFile ) );
-        return stringBuilder;
+        String subScriptCall = OS.platformOs().getSubScriptCall();
+        StringBuilder sb = new StringBuilder();
+        if ( subScriptCall != null )
+        {
+            sb = sb.append( subScriptCall ).append( " " );
+        }
+        return sb.append( getRepoScriptCommand( eclipseOsgiJarFile ) );
     }
-
-    protected abstract CharSequence getRepoScriptCommand( EclipseOsgiJarFile eclipseOsgiJarFile );
-
 }

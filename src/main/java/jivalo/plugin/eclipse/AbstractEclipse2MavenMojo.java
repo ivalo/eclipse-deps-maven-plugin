@@ -17,35 +17,38 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * @author Markku Saarela
- *
+ * 
  */
 public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
 {
 
-    protected static final String LINE_BREAK = System.getProperty("line.separator");
-    
+    protected static final String LINE_BREAK = System.getProperty( "line.separator" );
+
     private static final String PLUGINS = "plugins";
-    
+
     /**
-     * @parameter default-value="${project.build.directory}"
-     * @required
+     * 
      */
+    @Parameter( property = "targetFolder", defaultValue = "${project.build.directory}", required = true )
     protected File targetFolder;
 
     /**
-     * @parameter
-     * @required
+     * 
      */
+    @Parameter( property = "eclipseInstallationFolder", required = true )
     protected File eclipseInstallationFolder;
 
     /**
-     * list of dependecies to process. Name is jar name without OSGi version number and .jar file extension.
-     * If there is more than one version of that dependency latest is selected.
+     * list of dependecies to process. Name is jar name without OSGi version number and .jar file extension. If there is
+     * more than one version of that dependency latest is selected.
+     * 
      * @parameter
      */
+    @Parameter( property = "dependencyJarNames", required = false )
     protected List< String > dependencyJarNames;
 
     /**
@@ -56,37 +59,34 @@ public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
         super();
     }
 
-    /**
-     * @param eclipseInstallationFolder
-     * @param dependencyJarName
-     */
-    public AbstractEclipse2MavenMojo( File targetFolder, List< String > dependencyJarNames )
+    public List< String > getDependencyJarNames()
     {
-        super();
-        this.targetFolder = targetFolder;
-        this.eclipseInstallationFolder = lookupEclipseInstallationFolder();
-        this.dependencyJarNames = dependencyJarNames;
+        if ( this.dependencyJarNames != null )
+        {
+            return dependencyJarNames;
+        }
+        return new ArrayList< String >( 0 );
     }
-    
-    public List<EclipseOsgiJarFile> getEclipseDependencies() {
-        
-        DependencyFileFilter dependencyFileFilter = new DependencyFileFilter( dependencyJarNames );
-        
+
+    public List< EclipseOsgiJarFile > getEclipseDependencies()
+    {
+        DependencyFileFilter dependencyFileFilter = new DependencyFileFilter( getDependencyJarNames() );
+
         ArrayList< EclipseOsgiJarFile > list = new ArrayList< EclipseOsgiJarFile >();
-        
+
         File pluginsDirectory = resolvePluginsDirectory();
 
-        File[] listFiles = pluginsDirectory.listFiles(dependencyFileFilter);
-        
+        File[] listFiles = pluginsDirectory.listFiles( dependencyFileFilter );
+
         HashMap< String, EclipseOsgiJarFile > map = new HashMap< String, EclipseOsgiJarFile >();
-        
+
         for ( File file : listFiles )
         {
             EclipseOsgiJarFile eclipseOsgiJarFile = new EclipseOsgiJarFile( file );
             map.put( eclipseOsgiJarFile.getDependencyName(), eclipseOsgiJarFile );
         }
-        
-        for ( Entry< String, EclipseOsgiJarFile > entry :  map.entrySet() )
+
+        for ( Entry< String, EclipseOsgiJarFile > entry : map.entrySet() )
         {
             list.add( entry.getValue() );
         }
@@ -96,62 +96,34 @@ public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
 
     private File resolvePluginsDirectory()
     {
-        return new File(this.eclipseInstallationFolder, PLUGINS);
+        return new File( this.eclipseInstallationFolder, PLUGINS );
     }
-    
-    static File lookupEclipseInstallationFolder() {
-        
-        File[] listRoots = File.listRoots();
-        for ( File file : listRoots )
-        {
-            File installationFolder = lookupEclipseInstallationFolder( file );
-            if (installationFolder != null) {
-                return installationFolder;
-            }
-        }
-        return null;
-    }
-    
-    static File lookupEclipseInstallationFolder(File root) {
-        
-        File installationFolder = null;
-        
-        File[] listFiles = root.listFiles();
-        for ( File file : listFiles )
-        {
-            if (file.isDirectory() && file.getName().startsWith( "eclipse" ) ) {
-                installationFolder = file;
-            }
-            
-        }
-        return installationFolder;
-    }
-    
+
     /**
      * 
      * @author Markku Saarela
-     *
+     * 
      */
-    public static class EclipseOsgiJarFile {
-        
+    public static class EclipseOsgiJarFile
+    {
         private final String dependencyName;
         private final String version;
         private final File dependencyFile;
         private final String type;
-           
+
         /**
          * @param jarName
          * @param version
          */
-        public EclipseOsgiJarFile(File dependencyFile )
+        public EclipseOsgiJarFile( File dependencyFile )
         {
             super();
             this.dependencyFile = dependencyFile;
-            this.dependencyName = parseDependencyName(dependencyFile);
-            this.version = parseVersion(dependencyFile);
-            this.type = parseType(dependencyFile);
+            this.dependencyName = parseDependencyName( dependencyFile );
+            this.version = parseVersion( dependencyFile );
+            this.type = parseType( dependencyFile );
         }
-        
+
         /**
          * @return the dependencyName
          */
@@ -159,7 +131,7 @@ public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
         {
             return dependencyName;
         }
-        
+
         /**
          * @return the version
          */
@@ -175,7 +147,7 @@ public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
         {
             return dependencyFile;
         }
-        
+
         /**
          * @return the type
          */
@@ -186,28 +158,29 @@ public abstract class AbstractEclipse2MavenMojo extends AbstractMojo
 
         private String parseVersion( File dependencyFile )
         {
-            return dependencyFile.getName().substring( dependencyFile.getName().indexOf( "_" ) + 1, dependencyFile.getName().lastIndexOf( "." ));
+            return dependencyFile.getName().substring( dependencyFile.getName().indexOf( "_" ) + 1,
+                    dependencyFile.getName().lastIndexOf( "." ) );
         }
 
         private String parseDependencyName( File dependencyFile )
         {
-            return DependencyFileFilter.getOsgiFileName(  dependencyFile.getName() );
+            return DependencyFileFilter.getOsgiFileName( dependencyFile.getName() );
         }
-        
+
         private String parseType( File dependencyFile )
         {
-            return dependencyFile.getName().substring(dependencyFile.getName().lastIndexOf( "." ) + 1);
+            return dependencyFile.getName().substring( dependencyFile.getName().lastIndexOf( "." ) + 1 );
         }
 
         @Override
         public String toString()
         {
-            StringBuilder sb = new StringBuilder(dependencyName);
+            StringBuilder sb = new StringBuilder( dependencyName );
             sb.append( " " ).append( version );
             sb.append( " " ).append( type );
             return sb.toString();
         }
-        
+
     }
 
 }

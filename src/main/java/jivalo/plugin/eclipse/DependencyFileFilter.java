@@ -16,14 +16,13 @@ import java.util.List;
 
 /**
  * @author Markku Saarela
- *
+ * 
  */
 public class DependencyFileFilter implements FileFilter
 {
 
     private final List< String > dependencyJarNames;
 
-    
     /**
      * @param dependencyJarNames
      */
@@ -33,30 +32,27 @@ public class DependencyFileFilter implements FileFilter
         this.dependencyJarNames = dependencyJarNames;
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean accept( File pathname )
     {
-        if (pathname.isDirectory()) {
+        if ( pathname.isDirectory() )
+        {
             return false;
         }
-
         String osgiFileNamePrefix = getOsgiFileName( pathname );
-        
         return this.dependencyJarNames.contains( osgiFileNamePrefix );
     }
-    
-    private String getOsgiFileName(File file) {
-        
+
+    private String getOsgiFileName( File file )
+    {
         return getOsgiFileName( file.getName() );
     }
 
-    static String getOsgiFileName(String fileName) {
-        
+    static String getOsgiFileName( String fileName )
+    {
         return fileName.substring( 0, fileName.indexOf( "_" ) );
     }
-
 }
