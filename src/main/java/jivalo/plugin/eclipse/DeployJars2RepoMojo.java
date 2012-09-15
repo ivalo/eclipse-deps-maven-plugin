@@ -10,27 +10,28 @@
  */
 package jivalo.plugin.eclipse;
 
-import java.io.File;
-import java.util.List;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * @goal deployDependenciesScript
+ * 
  * @author Markku Saarela
  * 
  */
+@Mojo( name = "deploy-dependencies-script", threadSafe = true )
 public class DeployJars2RepoMojo extends EclipseJars2RepoMojo
 {
 
     /**
-     * @parameter
-     * @required
+     * 
      */
+    @Parameter( property = "repositoryId", required = true )
     private String repositoryId;
 
     /**
-     * @parameter
-     * @required
+     * 
      */
+    @Parameter( property = "repositoryIUrl", required = true )
     private String repositoryIUrl;
 
     /**
@@ -39,17 +40,6 @@ public class DeployJars2RepoMojo extends EclipseJars2RepoMojo
     public DeployJars2RepoMojo()
     {
         super();
-    }
-
-    /**
-     * @param repositoryId
-     * @param repositoryIUrl
-     */
-    DeployJars2RepoMojo(  File targetFolder, List< String > dependencyJarNames, String repositoryId, String repositoryIUrl )
-    {
-        super( targetFolder, dependencyJarNames );
-        this.repositoryId = repositoryId;
-        this.repositoryIUrl = repositoryIUrl;
     }
 
     @Override
@@ -62,23 +52,13 @@ public class DeployJars2RepoMojo extends EclipseJars2RepoMojo
     protected CharSequence getRepoScriptCommand( EclipseOsgiJarFile eclipseOsgiJarFile )
     {
         StringBuilder command = new StringBuilder( "mvn deploy:deploy-file" );
-
-        command.append( " -DgroupId=" ).append( eclipseOsgiJarFile.getDependencyName() );
-        command.append( " -DartifactId=" ).append( eclipseOsgiJarFile.getDependencyName() );
-        command.append( " -Dversion=" ).append( eclipseOsgiJarFile.getVersion() );
-        command.append( " -Dpackaging=" ).append( eclipseOsgiJarFile.getType() );
-        command.append( " -Dfile=" ).append( eclipseOsgiJarFile.getDependencyFile().getAbsolutePath() );
-        command.append( " -DrepositoryId=" ).append( this.repositoryId );
-        command.append( " -Durl=" ).append( this.repositoryIUrl );
-
-        // mvn deploy:deploy-file -DgroupId=<group-id> \
-        // -DartifactId=<artifact-id> \
-        // -Dversion=<version> \
-        // -Dpackaging=<type-of-packaging> \
-        // -Dfile=<path-to-file> \
-        // -DrepositoryId=<id-to-map-on-server-section-of-settings.xml> \
-        // -Durl=<url-of-the-repository-to-deploy>
-        return command;
+        command = appendParameter( command, "groupId", eclipseOsgiJarFile.getDependencyName() );
+        command = appendParameter( command, "artifactId", eclipseOsgiJarFile.getDependencyName() );
+        command = appendParameter( command, "version", eclipseOsgiJarFile.getVersion() );
+        command = appendParameter( command, "packaging", eclipseOsgiJarFile.getType() );
+        command = appendParameter( command, "file", eclipseOsgiJarFile.getDependencyFile().getAbsolutePath() );
+        command = appendParameter( command, "repositoryId", this.repositoryId );
+        return appendParameter( command, "url", this.repositoryIUrl );
     }
 
 }

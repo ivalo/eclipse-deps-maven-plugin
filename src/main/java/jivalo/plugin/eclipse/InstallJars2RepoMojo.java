@@ -10,14 +10,13 @@
  */
 package jivalo.plugin.eclipse;
 
-import java.io.File;
-import java.util.List;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * @goal installDependenciesScript
  * @author Markku Saarela
- *
+ * 
  */
+@Mojo( name = "install-dependencies-script", threadSafe = true )
 public class InstallJars2RepoMojo extends EclipseJars2RepoMojo
 {
 
@@ -29,15 +28,6 @@ public class InstallJars2RepoMojo extends EclipseJars2RepoMojo
         super();
     }
 
-    /**
-     * @param targetFolder
-     * @param dependencyJarNames
-     */
-    public InstallJars2RepoMojo( File targetFolder, List< String > dependencyJarNames )
-    {
-        super( targetFolder, dependencyJarNames );
-    }
-
     @Override
     protected String getScriptBaseFileName()
     {
@@ -47,15 +37,11 @@ public class InstallJars2RepoMojo extends EclipseJars2RepoMojo
     @Override
     protected CharSequence getRepoScriptCommand( EclipseOsgiJarFile eclipseOsgiJarFile )
     {
-        StringBuilder command = new StringBuilder("mvn install:install-file");
-
-        command.append( " -Dfile=" ).append( eclipseOsgiJarFile.getDependencyFile().getAbsolutePath() );
-        command.append( " -DgroupId=" ).append( eclipseOsgiJarFile.getDependencyName() );
-        command.append( " -DartifactId=" ).append( eclipseOsgiJarFile.getDependencyName() );
-        command.append( " -Dversion=" ).append( eclipseOsgiJarFile.getVersion() );
-        command.append( " -Dpackaging=" ).append( eclipseOsgiJarFile.getType() );
-
-        return command;
+        StringBuilder command = new StringBuilder( "mvn install:install-file" );
+        command = appendParameter( command, "file", eclipseOsgiJarFile.getDependencyFile().getAbsolutePath() );
+        command = appendParameter( command, "groupId", eclipseOsgiJarFile.getDependencyName() );
+        command = appendParameter( command, "artifactId", eclipseOsgiJarFile.getDependencyName() );
+        command = appendParameter( command, "version", eclipseOsgiJarFile.getVersion() );
+        return appendParameter( command, "packaging", eclipseOsgiJarFile.getType() );
     }
-
 }

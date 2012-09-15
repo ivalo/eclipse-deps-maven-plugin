@@ -13,40 +13,48 @@ package jivalo.plugin.eclipse;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
  * @author Markku Saarela
  * 
  */
-public class DeployJars2RepoMojoTest
+public class DeployJars2RepoMojoTest extends AbstractMojoTestCase
 {
+    private DeployJars2RepoMojo mojo;
 
-    @Test
-    public void execute() throws Exception
+    /**
+     * Default constructor.
+     */
+    public DeployJars2RepoMojoTest()
     {
-
-        File eclipseFolder = AbstractEclipse2MavenMojo.lookupEclipseInstallationFolder();
-
-        System.out.println( eclipseFolder );
-
-        String userDir = System.getProperty( "user.dir" );
-
-        File parent = new File( userDir );
-
-        parent = new File( parent, "target" );
-
-        System.out.println( parent );
-
-        ArrayList< String > dependencyJarNames = new ArrayList< String >( 3 );
-
-        dependencyJarNames.add( "org.eclipse.acceleo.common" );
-        dependencyJarNames.add( "org.eclipse.acceleo.compatibility" );
-        dependencyJarNames.add( "org.eclipse.acceleo.compatibility.ui" );
-
-        DeployJars2RepoMojo jars2repo = new DeployJars2RepoMojo( parent, dependencyJarNames, "repoId", "url" );
-
-        jars2repo.execute();
+        super();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setUp() throws Exception
+    {
+        // required for mojo lookups to work
+        super.setUp();
+        File testPom = new File( getBasedir(), "src/test/resources/unit/plugin-config.xml" );
+        mojo = (DeployJars2RepoMojo) lookupMojo( "deploy-dependencies-script", testPom );
+    }
+
+    public void testExecute() throws Exception
+    {
+        setVariableValueToObject( mojo, "eclipseInstallationFolder", EclipseHomeFactory.newFactory()
+                .resolveEclipseHome() );
+        setVariableValueToObject( mojo, "targetFolder", new File( getBasedir(), "/target" ) );
+        ArrayList< String > dependencyJarNames = new ArrayList< String >( 2 );
+        dependencyJarNames.add( "org.eclipse.core.runtime" );
+        dependencyJarNames.add( "org.eclipse.core.variables" );
+        setVariableValueToObject( mojo, "dependencyJarNames", dependencyJarNames );
+        setVariableValueToObject( mojo, "dependencyJarNames", dependencyJarNames );
+        setVariableValueToObject( mojo, "repositoryId", "repo-id" );
+        setVariableValueToObject( mojo, "repositoryIUrl", "repo-url" );
+        mojo.execute();
+    }
 }
