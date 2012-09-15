@@ -15,7 +15,7 @@
   <!-- The Basics -->
   <groupId>jivalo.plugins</groupId>
   <artifactId>eclipse-deps-maven-plugin</artifactId>
-  <version>0.9</version>
+  <version>0.9-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <dependencies>
@@ -55,7 +55,7 @@
     <jdkVersion>1.6</jdkVersion>
     <mavenVersion>3.0.4</mavenVersion>
     <mavenUrlDist>http://localhost:8081/nexus/content/repositories</mavenUrlDist>
-    <vcsUrl>scm:git:file:///home/markku/git</vcsUrl>
+    <vcsUrl>scm:git:file://home/markku/git</vcsUrl>
   </properties>
 
   <!-- Build Settings -->
