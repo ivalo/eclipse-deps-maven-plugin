@@ -19,6 +19,7 @@
   <packaging>maven-plugin</packaging>
 
   <dependencies>
+    <!-- Maven plugin dependency -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
@@ -36,6 +37,8 @@
       <artifactId>plexus-utils</artifactId>
       <version>3.0.1</version>
     </dependency>
+    
+    <!-- testing dependencies -->
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
@@ -51,9 +54,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     <jdkVersion>1.6</jdkVersion>
-    <mavenVersion>3.0.4</mavenVersion>
     <mavenUrlDist>http://localhost:8081/nexus/content/repositories</mavenUrlDist>
     <vcsUrl>scm:git:file:////home/markku/git</vcsUrl>
   </properties>
@@ -111,7 +112,7 @@
         <configuration>
           <toolchains>
             <jdk>
-              <version>1.6</version>
+              <version>${jdkVersion}</version>
               <vendor>sun</vendor>
             </jdk>
           </toolchains>
