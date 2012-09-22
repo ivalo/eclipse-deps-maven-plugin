@@ -15,7 +15,7 @@
   <!-- The Basics -->
   <groupId>jivalo.plugins</groupId>
   <artifactId>eclipse-deps-maven-plugin</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <dependencies>
@@ -249,6 +249,7 @@
   <scm>
     <connection>${vcsUrl}/eclipse-deps-maven-plugin</connection>
     <developerConnection>${vcsUrl}/eclipse-deps-maven-plugin</developerConnection>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
