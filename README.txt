@@ -1,1 +1,0 @@
-jIvalo eclipse-deps-maven-plugin is Maven plugin for importing Eclipse OSGI JAR files into Maven repository.
